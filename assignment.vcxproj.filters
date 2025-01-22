@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="external">
+      <UniqueIdentifier>{d043da94-5ad0-4315-928a-804005a21a9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="internal">
+      <UniqueIdentifier>{2399ccc2-dfa6-4d21-aefa-6003ea6d9677}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source files">
+      <UniqueIdentifier>{8dd7875d-f251-41b2-b114-a4f16853c91c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="external\stb_image_write.h">
+      <Filter>external</Filter>
+    </ClInclude>
+    <ClInclude Include="external\stb_image.h">
+      <Filter>external</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cpu.h">
+      <Filter>source files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cuda.cuh">
+      <Filter>source files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\openmp.h">
+      <Filter>source files</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\common.h">
+      <Filter>internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\config.h">
+      <Filter>internal</Filter>
+    </ClInclude>
+    <ClInclude Include="internal\main.h">
+      <Filter>internal</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\cpu.c">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\openmp.c">
+      <Filter>source files</Filter>
+    </ClCompile>
+    <ClCompile Include="internal\common.c">
+      <Filter>internal</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="src\cuda.cu">
+      <Filter>source files</Filter>
+    </CudaCompile>
+    <CudaCompile Include="internal\main.cu">
+      <Filter>internal</Filter>
+    </CudaCompile>
+    <CudaCompile Include="internal\mainProductOfDifferences.cu">
+      <Filter>internal</Filter>
+    </CudaCompile>
+    <CudaCompile Include="internal\mainChromaticAberration.cu">
+      <Filter>internal</Filter>
+    </CudaCompile>
+    <CudaCompile Include="internal\mainRemoveFactors.cu">
+      <Filter>internal</Filter>
+    </CudaCompile>
+  </ItemGroup>
+</Project>
