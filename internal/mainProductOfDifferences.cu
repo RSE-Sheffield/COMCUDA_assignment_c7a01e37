@@ -144,7 +144,7 @@ void runProductOfDifferences(int argc, char** argv, const Implementation impleme
     if (config.input_file) {
         // Load CSV
         printf("Using input file: %s%s%s\n", CONSOLE_YELLOW, config.input_file, CONSOLE_RESET);
-        loadCSV(config.input_file, reinterpret_cast<void**>(&input_buffer), &input_buffer_elements, "%f");
+        loadCSV(config.input_file, reinterpret_cast<void**>(&input_buffer), &input_buffer_elements, "%hhu");
         printf("Input has length: %s%u%s\n", CONSOLE_YELLOW, static_cast<unsigned int>(input_buffer_elements), CONSOLE_RESET);
     } else {
         // Random init
@@ -157,9 +157,9 @@ void runProductOfDifferences(int argc, char** argv, const Implementation impleme
         input_buffer_elements = config.random_length;
         input_buffer = static_cast<unsigned char*>(malloc(input_buffer_elements * sizeof(unsigned char)));
         std::mt19937 rng(config.random_seed);
-        std::uniform_int_distribution<unsigned char> dist(0, std::numeric_limits<unsigned char>::max());
+        std::uniform_int_distribution<unsigned short> dist(0, std::numeric_limits<unsigned char>::max());
         for (unsigned int i = 0; i < input_buffer_elements; ++i) {
-            input_buffer[i] = dist(rng);
+            input_buffer[i] = static_cast<unsigned char>(dist(rng));
         }
     }
 
@@ -168,7 +168,7 @@ void runProductOfDifferences(int argc, char** argv, const Implementation impleme
 
     // Run student implementation
     float timing_log;
-    uint64_t product_of_differences_result = -1;
+    uint64_t product_of_differences_result = 0;
     const int TOTAL_RUNS = config.benchmark ? BENCHMARK_RUNS : 1;
     {
         //Init for run  

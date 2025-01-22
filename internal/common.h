@@ -39,7 +39,7 @@ inline bool equalsEpsilon(float a, float b, float epsilon) {
 }
 
 void loadCSV(const char *input_file, void **buf, size_t *buf_elements, const char *format);
-void saveCSV(const char *output_file, unsigned int *buf, size_t buf_elements);
+void saveCSV(const char *output_file, int *buf, size_t buf_elements);
 void loadImage(const char *input_file, Image *out_image);
 void saveImage(const char *output_file, Image out_image);
 #ifdef __cplusplus

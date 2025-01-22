@@ -50,10 +50,10 @@ void cpu_chromaticaberration(const unsigned char *input, unsigned char *output, 
                 const float wx = displacement_x - x0;
                 const float wy = displacement_y - y0;
                 // Clamp offset pixels into bounds
-                x0 = min(max(x0, 0), width);
-                x1 = min(max(x1, 0), width);
-                y0 = min(max(y0, 0), height);
-                y1 = min(max(y1, 0), height);
+                x0 = min(max(x0, 0), (unsigned int)width);
+                x1 = min(max(x1, 0), (unsigned int)width);
+                y0 = min(max(y0, 0), (unsigned int)height);
+                y1 = min(max(y1, 0), (unsigned int)height);
                 // Read/Write weighted pixel data
                 output[CHANNELS * width * y + CHANNELS * x + channel] = (unsigned char)
                    (input[CHANNELS * width * y0 + CHANNELS * x0 + channel] * (1 - wx) * (1 - wy) +

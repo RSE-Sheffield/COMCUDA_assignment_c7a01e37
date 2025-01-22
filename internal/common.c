@@ -121,14 +121,14 @@ void loadCSV(const char *input_file, void **buffer, size_t *buf_elements, const 
     free(file_buf);
     *buffer = t_buffer;
 }
-void saveCSV(const char* output_file, unsigned int* buf, size_t buf_elements) {
+void saveCSV(const char* output_file, int* buf, size_t buf_elements) {
     FILE *outf = fopen(output_file, "w");
     if (outf == NULL) {
         fprintf(stderr, CONSOLE_RED "Unable to open file '%s' for writing.\n" CONSOLE_RESET, output_file);
         exit(EXIT_FAILURE);
     }
     for (unsigned int i = 0; i < buf_elements; ++i) {
-        fprintf(outf, "%u", buf[i]);
+        fprintf(outf, "%d", buf[i]);
         if (i + 1 < buf_elements) {
             putc(',', outf);
         }

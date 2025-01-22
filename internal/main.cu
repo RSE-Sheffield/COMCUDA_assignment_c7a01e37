@@ -154,11 +154,11 @@ const char* algorithm_to_string(Algorithm a) {
     switch (a)
     {
     case ProductOfDifferences:
-        return "ProductOfDifferences";
+        return "Product Of Differences";
     case RemoveFactors:
-        return "RemoveFactors";
+        return "Remove Factors";
     case ChromaticAberration:
-        return "ChromaticAberration";
+        return "Chromatic Aberration";
     }
     return "?";
 }
