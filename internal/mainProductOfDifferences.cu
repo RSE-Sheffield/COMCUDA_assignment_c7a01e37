@@ -215,8 +215,8 @@ void runProductOfDifferences(int argc, char** argv, const Implementation impleme
     {
         const bool FAIL = product_of_differences_validation != product_of_differences_result;
         printf("Product of Differences Result: %s" CONSOLE_RESET "\n", FAIL ? CONSOLE_RED "Fail" : CONSOLE_GREEN "Pass");
-            printf("\tCPU: " CONSOLE_YELLOW "%llu" CONSOLE_RESET "\n", product_of_differences_validation);
-            printf("\t%s: %s%llu" CONSOLE_RESET "\n", implementation_to_string(implementation), FAIL ? CONSOLE_RED : CONSOLE_GREEN, product_of_differences_result);
+            printf("\tCPU: " CONSOLE_YELLOW "%zu" CONSOLE_RESET "\n", product_of_differences_validation);
+            printf("\t%s: %s%zu" CONSOLE_RESET "\n", implementation_to_string(implementation), FAIL ? CONSOLE_RED : CONSOLE_GREEN, product_of_differences_result);
     }
 
     // Export output

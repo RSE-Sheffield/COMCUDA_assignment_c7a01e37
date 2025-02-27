@@ -38,7 +38,7 @@ size_t cpu_removefactors(const int *input, size_t n, int divisor, int *output);
  * @param width The width of image `input`
  * @param height The height of image `input`
  */
-void cpu_chromaticaberration(const unsigned char *input, unsigned char *output, size_t width, size_t height);
+void cpu_chromaticaberration(const unsigned char *input, unsigned char *output, const unsigned int width, const unsigned int height);
 
 #ifdef __cplusplus
 }

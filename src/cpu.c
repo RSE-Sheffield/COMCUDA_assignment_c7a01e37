@@ -1,5 +1,6 @@
 #include "cpu.h"
 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -38,7 +39,7 @@ void cpu_chromaticaberration(const unsigned char *input, unsigned char *output, 
             const float distance_x = (x - (width / 2.0f));
             const float distance_y = y - (height / 2.0f);
             const float distance_xy = sqrtf(powf(distance_x, 2) + powf(distance_y, 2));
-            const float norm_distance = distance_xy /max(width, height);
+            const float norm_distance = distance_xy / fmaxf((float)width, (float)height);
             // Process each channel individually
             for (unsigned int channel = 0; channel < 3; ++channel) {
                 // Scale displacement for each channel
@@ -47,16 +48,16 @@ void cpu_chromaticaberration(const unsigned char *input, unsigned char *output, 
                 // Displaced sample coordinates
                 float sample_x = x + displacement_x;
                 float sample_y = y + displacement_y;
-                sample_x = min(max(sample_x, 0), width - 1);
-                sample_y = min(max(sample_y, 0), height - 1);
+                sample_x = fminf(fmaxf(sample_x, 0), (float)width - 1);
+                sample_y = fminf(fmaxf(sample_y, 0), (float)height - 1);
                 // Bilinear sample the image, with the floating point coordinates
                 int x0 = (int)floorf(sample_x);
                 int y0 = (int)floorf(sample_y);
                 int x1 = x0 + 1;
                 int y1 = y0 + 1;
-                // Clamp offset pixels into bounds
-                x1 = min(max(x1, 0), width - 1);
-                y1 = min(max(y1, 0), height - 1);
+                // Clamp offset pixels into bounds (int max does not exist within c stdlib, avoid cast)
+                x1 = (int)fminf(fmaxf((float)x1, 0), (float)width - 1);  // this is now implicit casting to/from floats
+                y1 = (int)fminf(fmaxf((float)y1, 0), (float)height - 1);  // this is now implicit casting to/from floats
                 // Read/Write weighted pixel data
                 const float wx = sample_x - x0;
                 const float wy = sample_y - y0;
