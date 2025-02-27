@@ -128,12 +128,8 @@ void saveCSV(const char* output_file, int* buf, size_t buf_elements) {
         exit(EXIT_FAILURE);
     }
     for (unsigned int i = 0; i < buf_elements; ++i) {
-        fprintf(outf, "%d", buf[i]);
-        if (i + 1 < buf_elements) {
-            putc(',', outf);
-        }
+        fprintf(outf, "%d\n", buf[i]);
     }
-    putc('\n', outf);
     fclose(outf);
 }
 
@@ -153,13 +149,14 @@ void loadImage(const char* input_file, Image* out_image) {
         // Transfer image to our output buffers
         out_image->width = user_cimage.width;
         out_image->height = user_cimage.height;
-        out_image->data = (unsigned char *)malloc(out_image->width * out_image->height * user_cimage.channels * sizeof(unsigned char));
+        out_image->data = (unsigned char*)malloc(out_image->width * out_image->height * user_cimage.channels * sizeof(unsigned char));
+        memcpy(out_image->data, user_cimage.data, out_image->width * out_image->height * user_cimage.channels * sizeof(unsigned char));
         // Cleanup
         stbi_image_free(user_cimage.data);
     }
 }
 void saveImage(const char *output_file, Image out_image) {
-    if (!stbi_write_png(output_file, out_image.width, out_image.height, 1, out_image.data, out_image.width)) {
+    if (!stbi_write_png(output_file, out_image.width, out_image.height, CHANNELS, out_image.data, out_image.width * CHANNELS)) {
         printf(CONSOLE_RED "Unable to save image output to %s.\n" CONSOLE_RESET, output_file);
     }
 }

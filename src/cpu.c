@@ -1,4 +1,6 @@
 #include "cpu.h"
+
+#include <stdio.h>
 #include <stdlib.h>
 
 uint64_t cpu_productofdifferences(const unsigned char *x, const size_t n) {
@@ -19,21 +21,21 @@ size_t cpu_removefactors(const int *input, const size_t n, const int divisor, in
     for (size_t i = 0; i < n; ++i) {
         // Test whether the element should be kept
         if (input[i] % divisor != 0) {
-            // Add the absolute difference of the current and previous element to result
+            // Store the value to be kept at the next index in the return buffer
             output[return_len] = input[i];
-            // Increment the length
+            // Increment the counter of how many items are in the return buffer
             ++return_len;
         }
     }
     return return_len;
 }
 
-void cpu_chromaticaberration(const unsigned char *input, unsigned char *output, const size_t width, const size_t height) {
+void cpu_chromaticaberration(const unsigned char *input, unsigned char *output, const unsigned int width, const unsigned int height) {
     // Iterate the image's pixels
     for (unsigned int x = 0; x < width; ++x) {
-        for (unsigned int y = 0; y < height; ++x) {
+        for (unsigned int y = 0; y < height; ++y) {
             // Calculate normalised distance of pixel from center of image
-            const float distance_x = x - (width / 2.0f);
+            const float distance_x = (x - (width / 2.0f));
             const float distance_y = y - (height / 2.0f);
             const float distance_xy = sqrtf(powf(distance_x, 2) + powf(distance_y, 2));
             const float norm_distance = distance_xy /max(width, height);
@@ -42,24 +44,27 @@ void cpu_chromaticaberration(const unsigned char *input, unsigned char *output, 
                 // Scale displacement for each channel
                 const float displacement_x = distance_x * FACTOR * norm_distance * CHANNEL_FACTORS[channel];
                 const float displacement_y = distance_y * FACTOR * norm_distance * CHANNEL_FACTORS[channel];
+                // Displaced sample coordinates
+                float sample_x = x + displacement_x;
+                float sample_y = y + displacement_y;
+                sample_x = min(max(sample_x, 0), width - 1);
+                sample_y = min(max(sample_y, 0), height - 1);
                 // Bilinear sample the image, with the floating point coordinates
-                unsigned int x0 = (unsigned int)floorf(displacement_x);
-                unsigned int x1 = x0 + 1;
-                unsigned int y0 = (unsigned int)floorf(displacement_y);
-                unsigned int y1 = y0 + 1;
-                const float wx = displacement_x - x0;
-                const float wy = displacement_y - y0;
+                int x0 = (int)floorf(sample_x);
+                int y0 = (int)floorf(sample_y);
+                int x1 = x0 + 1;
+                int y1 = y0 + 1;
                 // Clamp offset pixels into bounds
-                x0 = min(max(x0, 0), (unsigned int)width);
-                x1 = min(max(x1, 0), (unsigned int)width);
-                y0 = min(max(y0, 0), (unsigned int)height);
-                y1 = min(max(y1, 0), (unsigned int)height);
+                x1 = min(max(x1, 0), width - 1);
+                y1 = min(max(y1, 0), height - 1);
                 // Read/Write weighted pixel data
+                const float wx = sample_x - x0;
+                const float wy = sample_y - y0;
                 output[CHANNELS * width * y + CHANNELS * x + channel] = (unsigned char)
-                   (input[CHANNELS * width * y0 + CHANNELS * x0 + channel] * (1 - wx) * (1 - wy) +
-                    input[CHANNELS * width * y0 + CHANNELS * x1 + channel] * wx * (1 - wy) +
-                    input[CHANNELS * width * y1 + CHANNELS * x0 + channel] * (1 - wx) * wy +
-                    input[CHANNELS * width * y1 + CHANNELS * x1 + channel] * wx * wy);
+                    (input[CHANNELS * width * y0 + CHANNELS * x0 + channel] * (1 - wx) * (1 - wy) +
+                     input[CHANNELS * width * y0 + CHANNELS * x1 + channel] * wx * (1 - wy) +
+                     input[CHANNELS * width * y1 + CHANNELS * x0 + channel] * (1 - wx) * wy +
+                     input[CHANNELS * width * y1 + CHANNELS * x1 + channel] * wx * wy);
             }
         }
     }

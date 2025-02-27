@@ -10,7 +10,7 @@
 /**
  * A factor by which displacement scales based on distance from center
  */
-#define FACTOR 0.7f
+#define FACTOR 0.1f
 /**
  * Unique per channel factors
  * @note This is a grim way to implement a const array, however it's both C and CUDA compatible.

@@ -25,8 +25,8 @@ namespace {
 void parse_args(int argc, char** argv, MainConfig* config) {
     // Clear config struct
     memset(config, 0, sizeof(MainConfig));
-    if (argc < 3 || argc > 7) {
-        fprintf(stderr, CONSOLE_RED "Program expects 2-6 arguments, %d provided.\n" CONSOLE_RESET, argc - 1);
+    if (argc < 4 || argc > 8) {
+        fprintf(stderr, CONSOLE_RED "Program expects 3-7 arguments, %d provided.\n" CONSOLE_RESET, argc - 1);
         print_help(argv[0]);
     }
     // Parse first arg as implementation
@@ -127,6 +127,7 @@ void print_help(const char *program_name) {
     fprintf(stderr, line_fmt, CONSOLE_BLUE "<length>" CONSOLE_RESET, "Length of the input buffer to be generated");
     fprintf(stderr, CONSOLE_YELLOW "Remove Factors Arguments" CONSOLE_RESET ": " CONSOLE_BLUE "<input file> <divisor>" CONSOLE_RESET " (" CONSOLE_BLUE "<output file>" CONSOLE_RESET ") | " CONSOLE_BLUE "<random seed> <length> <divisor>" CONSOLE_RESET " (" CONSOLE_BLUE "<output file>" CONSOLE_RESET ")" CONSOLE_RESET "\n");
     fprintf(stderr, line_fmt, CONSOLE_BLUE "<input file>" CONSOLE_RESET, "Path to .csv of ints to initialise input buffer");
+    fprintf(stderr, line_fmt, CONSOLE_BLUE "<divisor>" CONSOLE_RESET, "An integer, values that are a factor of this number will be removed from the input buffer.");
     fprintf(stderr, line_fmt, CONSOLE_BLUE "<output file>" CONSOLE_RESET, "Optional, path to .csv output file.");
     fprintf(stderr, line_fmt, CONSOLE_BLUE "<random seed>" CONSOLE_RESET, "Seed for random generation of input buffer");
     fprintf(stderr, line_fmt, CONSOLE_BLUE "<length>" CONSOLE_RESET, "Length of the input buffer to be generated");

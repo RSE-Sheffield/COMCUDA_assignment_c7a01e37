@@ -38,6 +38,10 @@ struct CConfig {
  * @param config Pointer to config structure for return value
  */
 void parse_args(int argc, char** argv, CConfig* config) {
+    if (argc < 4 || argc > 7) {
+        fprintf(stderr, CONSOLE_RED "Chromatic Aberration expects 3-6 arguments, %d provided.\n" CONSOLE_RESET, argc - 1);
+        print_help(argv[0]);
+    }
     // Clear config struct
     *config = {};
     // Iterate over remaining args    
@@ -85,6 +89,10 @@ void parse_args(int argc, char** argv, CConfig* config) {
         fprintf(stderr, "Unexpected chromatic aberration argument: %s\n", argv[i]);
         print_help(argv[0]);
     }
+    if (!config->input_file) {
+        fprintf(stderr, "Input file required\n");
+        print_help(argv[0]);
+    }
     if (t_arg)
         free(t_arg);
 }
@@ -110,17 +118,17 @@ void runChromaticAberration(int argc, char** argv, const Implementation implemen
     
     // Create result for validation
     Image validation_image;
-    validation_image.width = input_image.width - 2;
-    validation_image.height = input_image.height - 2;
-    validation_image.data = (unsigned char*)malloc(validation_image.width * validation_image.height * sizeof(unsigned char));
+    validation_image.width = input_image.width;
+    validation_image.height = input_image.height;
+    validation_image.data = (unsigned char*)malloc(validation_image.width * validation_image.height * sizeof(unsigned char) * CHANNELS);
     cpu_chromaticaberration(input_image.data, validation_image.data, input_image.width, input_image.height);
 
     // Run student implementation
     float timing_log;
     Image result_image;
-    result_image.width = input_image.width - 2;
-    result_image.height = input_image.height - 2;
-    result_image.data = (unsigned char*)malloc(result_image.width * result_image.height * sizeof(unsigned char));
+    result_image.width = input_image.width;
+    result_image.height = input_image.height;
+    result_image.data = (unsigned char*)malloc(result_image.width * result_image.height * sizeof(unsigned char) * CHANNELS);
     const int TOTAL_RUNS = config.benchmark ? BENCHMARK_RUNS : 1;
     {
         //Init for run  
@@ -133,7 +141,7 @@ void runChromaticAberration(int argc, char** argv, const Implementation implemen
             if (TOTAL_RUNS > 1)
                 printf("\r%d/%d", runs + 1, TOTAL_RUNS);
             // Reset result image
-            memset(result_image.data, 0, result_image.width * result_image.height * sizeof(unsigned char));
+            memset(result_image.data, 0, result_image.width * result_image.height * 3 * sizeof(unsigned char));
             // Run Chromatic Aberration algorithm
             CUDA_CALL(cudaEventRecord(startT));
             CUDA_CALL(cudaEventSynchronize(startT));

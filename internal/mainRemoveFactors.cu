@@ -94,7 +94,7 @@ void parse_args(int argc, char** argv, DSConfig* config) {
             }
         }
         // Random seed + length
-        if (i + 2 < argc && !config->random_seed) {
+        if (i + 2 < argc && !config->random_seed && !config->input_file) {
             // Random seed
             char* end = nullptr;
             const unsigned int t_arg_uint = (unsigned int)strtoul(argv[i], &end, 10);
@@ -151,7 +151,7 @@ void parse_args(int argc, char** argv, DSConfig* config) {
             }
             continue;
         }
-        fprintf(stderr, "Unexpected remove factors argument: %s\n", argv[i]);
+        fprintf(stderr, "Unexpected remove factors argument: %s\n Have all arguments been provided?\n", argv[i]);
         print_help(argv[0]);
     }
     if (config->input_file && config->random_seed) {
@@ -161,7 +161,7 @@ void parse_args(int argc, char** argv, DSConfig* config) {
         fprintf(stderr, "Neither input file nor random seed/length were specified\n");
         print_help(argv[0]);
     }
-    else if (!config->input_file) {
+    else if (!config->divisor) {
         fprintf(stderr, "Divisor must be a (none zero) positive integer\n");
         print_help(argv[0]);
     }
@@ -256,7 +256,7 @@ void runRemoveFactors(int argc, char** argv, const Implementation implementation
         unsigned int errors = 0;
         if (validation_return == result_return) {
             // Lengths match
-            for (unsigned int i = 0; i < input_buffer_elements; ++i) {
+            for (unsigned int i = 0; i < validation_return; ++i) {
                 if (validation_array[i] != result_array[i]) {
                     ++errors;
                 }
