@@ -12,7 +12,7 @@ DEBUG_DIR := debug
 
 # C and CUDA source files to be compiled
 # Add any new source files you create to be compiled and linked into the executables to the list
-SRCS=internal/main.cu internal/common.c internal/mainStandardDeviation.cu internal/mainConvolution.cu internal/mainDataStructure.cu src/cpu.c src/openmp.c src/cuda.cu 
+SRCS=internal/main.cu internal/common.c internal/mainProductOfDifferences.cu internal/mainRemoveFactors.cu internal/mainChromaticAberration.cu src/cpu.c src/openmp.c src/cuda.cu 
 
 # Header files which if changed will result in a rebuild.
 # Add any additional header files you create to this list for rebuild support.
