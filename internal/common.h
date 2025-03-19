@@ -38,7 +38,7 @@ inline bool equalsEpsilon(float a, float b, float epsilon) {
     return fabsf(a - b) < fabsf(epsilon);
 }
 
-void loadCSV(const char *input_file, void **buf, size_t *buf_elements, const char *format);
+void loadCSV(const char *input_file, void **buf, size_t *buf_elements, const char *format, size_t type_sz);
 void saveCSV(const char *output_file, int *buf, size_t buf_elements);
 void loadImage(const char *input_file, Image *out_image);
 void saveImage(const char *output_file, Image out_image);

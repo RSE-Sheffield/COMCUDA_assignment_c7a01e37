@@ -56,7 +56,7 @@ struct HSVImage {
 };
 typedef struct HSVImage HSVImage;
 
-void loadCSV(const char *input_file, void **buffer, size_t *buf_elements, const char* format) {
+void loadCSV(const char *input_file, void **buffer, size_t *buf_elements, const char* format, size_t type_sz) {
     // Open file
     FILE* file = fopen(input_file, "r");
     if (file == NULL) {
@@ -107,12 +107,12 @@ void loadCSV(const char *input_file, void **buffer, size_t *buf_elements, const 
         token = strtok(NULL, delimiter);
     }
     *buf_elements = elements;
-    float *t_buffer = malloc(elements * sizeof(float));  // sizeof(float) == sizeof(unsigned int)
+    char *t_buffer = malloc(elements * type_sz);  // sizeof(float) == sizeof(unsigned int)
     // Read items (sd:float, ds:uint)
     token = strtok(buf2, delimiter);
     elements = 0;
     while (token != NULL) {
-        sscanf(token, format, &t_buffer[elements++]);  // should return 1
+        sscanf(token, format, &t_buffer[type_sz * elements++]);  // should return 1
         token = strtok(NULL, delimiter);
     }
     // Cleanup

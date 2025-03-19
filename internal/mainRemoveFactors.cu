@@ -182,7 +182,7 @@ void runRemoveFactors(int argc, char** argv, const Implementation implementation
     if (config.input_file) {
         // Load CSV
         printf("Using input file: %s%s%s\n", CONSOLE_YELLOW, config.input_file, CONSOLE_RESET);
-        loadCSV(config.input_file, reinterpret_cast<void**>(&input_buffer), &input_buffer_elements, "%d");
+        loadCSV(config.input_file, reinterpret_cast<void**>(&input_buffer), &input_buffer_elements, "%d", sizeof(int));
         printf("Input has length: %s%u%s\n", CONSOLE_YELLOW, static_cast<unsigned int>(input_buffer_elements), CONSOLE_RESET);
     } else {
         // Random init
