@@ -13,9 +13,16 @@
 #define FACTOR 0.1f
 /**
  * Unique per channel factors
- * @note This is a grim way to implement a const array, however it's both C and CUDA compatible.
+ * @note C does not support modern C++ constexpr
+ * so we define it two different ways that won't upset the linker
+ * Host code sees an ugly macro
+ * CUDA device code sees a modern c++ constant expression
  */
+#ifndef __CUDACC__
 #define CHANNEL_FACTORS (float[]){ 1.2f, 0.8f, 1.0f }
+#else
+__device__ constexpr float CHANNEL_FACTORS[3] = { 1.2f, 0.8f, 1.0f };
+#endif
 
 /**
  * Number of runs to complete for benchmarking
