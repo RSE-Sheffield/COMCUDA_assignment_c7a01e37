@@ -23,6 +23,10 @@ struct MainConfig {
      * It may also warn about incorrect settings
      */
     unsigned char benchmark;
+    /**
+     * Extends logging to add some marking output
+     */
+    unsigned char marking;
 }; typedef struct MainConfig MainConfig;
 /**
  * Print runtime args and exit

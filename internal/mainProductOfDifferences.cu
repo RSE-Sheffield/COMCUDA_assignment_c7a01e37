@@ -5,6 +5,7 @@
 #include <ctime>
 #include <random>
 #include <algorithm>
+#include <cfloat>
 
 #include "config.h"
 #include "common.h"
@@ -44,11 +45,11 @@ struct SDConfig {
  * @param argv argv from main()]
  * @param config Pointer to config structure for return value
  */
-void parse_args(int argc, char** argv, SDConfig* config) {
+void parse_args(int argc, char** argv, SDConfig* config, const bool marking) {
     // Clear config struct
     *config = {};
-    // Iterate over remaining args    
-    int i = 3;
+    // Iterate over remaining args
+    int i = marking ? 4 : 3;
     char* t_arg = 0;
     for (; i < argc; i++) {
         // Make a lowercase copy of the argument
@@ -132,9 +133,9 @@ void parse_args(int argc, char** argv, SDConfig* config) {
 }
 }
 
-void runProductOfDifferences(int argc, char** argv, const Implementation implementation) {
+void runProductOfDifferences(int argc, char** argv, const Implementation implementation, const bool marking) {
     SDConfig config;
-    parse_args(argc, argv, &config);
+    parse_args(argc, argv, &config, marking);
 
     // Inputs
     unsigned char *input_buffer = nullptr;
@@ -168,6 +169,7 @@ void runProductOfDifferences(int argc, char** argv, const Implementation impleme
 
     // Run student implementation
     float timing_log;
+    float min_time = FLT_MAX;
     uint64_t product_of_differences_result = 0;
     const int TOTAL_RUNS = config.benchmark ? BENCHMARK_RUNS : 1;
     {
@@ -199,6 +201,7 @@ void runProductOfDifferences(int argc, char** argv, const Implementation impleme
             // Sum timing info
             float milliseconds = 0;
             CUDA_CALL(cudaEventElapsedTime(&milliseconds, startT, stopT));
+            min_time = min_time > milliseconds ? milliseconds : min_time;
             timing_log += milliseconds;
         }
         if (TOTAL_RUNS > 1)
@@ -236,6 +239,10 @@ void runProductOfDifferences(int argc, char** argv, const Implementation impleme
     printf(CONSOLE_YELLOW "Code built as DEBUG, timing results are invalid!\n" CONSOLE_RESET);
 #endif
     printf("Time: %.3fms\n", timing_log);
+
+    if (marking) {
+        printf("\n\nRESULT=%s=%f=%f=", product_of_differences_validation != product_of_differences_result ? "FAIL" : "PASS", timing_log, min_time);
+    }
 
     // Cleanup
     if (input_buffer)

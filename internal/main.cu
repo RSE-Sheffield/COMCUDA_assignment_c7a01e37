@@ -29,13 +29,21 @@ void parse_args(int argc, char** argv, MainConfig* config) {
         fprintf(stderr, CONSOLE_RED "Program expects 3-7 arguments, %d provided.\n" CONSOLE_RESET, argc - 1);
         print_help(argv[0]);
     }
+    int arg = 1;
+    // Parse optional marking arg
+    {
+        if (!strcmp(argv[arg], "MARKING")) {
+            config->marking = 1;
+            ++arg;
+        }
+    }
     // Parse first arg as implementation
     {
         char lower_arg[7];  // We only care about first 6 characters
         // Convert to lower case
         int i = 0;
-        for (; argv[1][i] && i < 6; i++) {
-            lower_arg[i] = tolower(argv[1][i]);
+        for (; argv[arg][i] && i < 6; i++) {
+            lower_arg[i] = tolower(argv[arg][i]);
         }
         lower_arg[i] = '\0';
         // Check for a match
@@ -49,16 +57,17 @@ void parse_args(int argc, char** argv, MainConfig* config) {
             config->implementation = CUDA;
         }
         else {
-            fprintf(stderr, CONSOLE_RED "Unexpected string provided as first argument: '%s' .\n" CONSOLE_RESET, argv[1]);
+            fprintf(stderr, CONSOLE_RED "Unexpected string provided as first argument: '%s' .\n" CONSOLE_RESET, argv[arg]);
             fprintf(stderr, CONSOLE_RED "First argument expects a single implementation as string: CPU, OPENMP, CUDA.\n" CONSOLE_RESET);
             print_help(argv[0]);
         }
+        ++arg;
     }
     // Parse second arg as algorithm
     {
         char lower_arg;  // We only care about the first character
         // Convert to lower case
-        lower_arg = tolower(argv[2][0]);
+        lower_arg = tolower(argv[arg][0]);
         // Check for a match
         if (lower_arg == 'p') {
             config->algorithm = ProductOfDifferences;
@@ -67,7 +76,7 @@ void parse_args(int argc, char** argv, MainConfig* config) {
         } else if (lower_arg == 'c') {
             config->algorithm = ChromaticAberration;
         } else {
-            fprintf(stderr, CONSOLE_RED "Unexpected string provided as second argument: '%s' .\n" CONSOLE_RESET, argv[2]);
+            fprintf(stderr, CONSOLE_RED "Unexpected string provided as second argument: '%s' .\n" CONSOLE_RESET, argv[arg]);
             fprintf(stderr, CONSOLE_RED "Second argument expects a single algorithm as string: SD, C, DS.\n" CONSOLE_RESET);
             print_help(argv[0]);
         }
@@ -75,9 +84,9 @@ void parse_args(int argc, char** argv, MainConfig* config) {
 }
 }
 
-void runProductOfDifferences(int argc, char** argv, Implementation implementation);
-void runRemoveFactors(int argc, char** argv, Implementation implementation);
-void runChromaticAberration(int argc, char** argv, Implementation implementation);
+void runProductOfDifferences(int argc, char** argv, Implementation implementation, bool marking);
+void runRemoveFactors(int argc, char** argv, Implementation implementation, bool marking);
+void runChromaticAberration(int argc, char** argv, Implementation implementation, bool marking);
 
 int main(int argc, char **argv) {
 #ifdef _MSC_VER
@@ -91,17 +100,18 @@ int main(int argc, char **argv) {
 #endif
     // Parse args
     MainConfig config;
+    config.marking = 0;
     parse_args(argc, argv, &config);
 
     switch (config.algorithm) {
     case ProductOfDifferences:
-        runProductOfDifferences(argc, argv, config.implementation);
+        runProductOfDifferences(argc, argv, config.implementation, config.marking);
         break;
     case RemoveFactors:
-        runRemoveFactors(argc, argv, config.implementation);
+        runRemoveFactors(argc, argv, config.implementation, config.marking);
         break;
     case ChromaticAberration:
-        runChromaticAberration(argc, argv, config.implementation);
+        runChromaticAberration(argc, argv, config.implementation, config.marking);
         break;
     }
     

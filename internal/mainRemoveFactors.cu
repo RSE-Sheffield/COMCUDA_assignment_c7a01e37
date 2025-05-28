@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <ctime>
 #include <random>
+#include <cfloat>
 
 #include "config.h"
 #include "common.h"
@@ -51,11 +52,11 @@ struct DSConfig {
  * @param argv argv from main()]
  * @param config Pointer to config structure for return value
  */
-void parse_args(int argc, char** argv, DSConfig* config) {
+void parse_args(int argc, char** argv, DSConfig* config, const bool marking) {
     // Clear config struct
     *config = {};
-    // Iterate over remaining args    
-    int i = 3;
+    // Iterate over remaining args
+    int i = marking ? 4 : 3;
     char* t_arg = 0;
     for (; i < argc; i++) {
         // Make a lowercase copy of the argument
@@ -170,9 +171,9 @@ void parse_args(int argc, char** argv, DSConfig* config) {
 }
 }
 
-void runRemoveFactors(int argc, char** argv, const Implementation implementation) {
+void runRemoveFactors(int argc, char** argv, const Implementation implementation, const bool marking) {
     DSConfig config;
-    parse_args(argc, argv, &config);
+    parse_args(argc, argv, &config, marking);
 
     // Inputs
     int *input_buffer = nullptr;
@@ -207,6 +208,7 @@ void runRemoveFactors(int argc, char** argv, const Implementation implementation
 
     // Run student implementation
     float timing_log;
+    float min_time = FLT_MAX;
     int *result_array = static_cast<int*>(malloc(input_buffer_elements * sizeof(int)));
     size_t result_return = 0;
     const int TOTAL_RUNS = config.benchmark ? BENCHMARK_RUNS : 1;
@@ -239,6 +241,7 @@ void runRemoveFactors(int argc, char** argv, const Implementation implementation
             // Sum timing info
             float milliseconds = 0;
             CUDA_CALL(cudaEventElapsedTime(&milliseconds, startT, stopT));
+            min_time = min_time > milliseconds ? milliseconds : min_time;
             timing_log += milliseconds;
         }
         if (TOTAL_RUNS > 1)
@@ -252,8 +255,8 @@ void runRemoveFactors(int argc, char** argv, const Implementation implementation
     }
 
     // Validate and report
+    unsigned int errors = 0;
     {
-        unsigned int errors = 0;
         if (validation_return == result_return) {
             // Lengths match
             for (unsigned int i = 0; i < validation_return; ++i) {
@@ -295,6 +298,10 @@ void runRemoveFactors(int argc, char** argv, const Implementation implementation
     printf(CONSOLE_YELLOW "Code built as DEBUG, timing results are invalid!\n" CONSOLE_RESET);
 #endif
     printf("Time: %.3fms\n", timing_log);
+
+    if (marking) {
+        printf("\n\nRESULT=%s=%f=%f=", errors ? "FAIL" : "PASS", timing_log, min_time);
+    }
 
     // Cleanup
     free(input_buffer);

@@ -3,6 +3,7 @@
 #include <cstring>
 #include <cstdint>
 #include <ctime>
+#include <cfloat>
 
 #include "config.h"
 #include "common.h"
@@ -37,15 +38,15 @@ struct CConfig {
  * @param argv argv from main()]
  * @param config Pointer to config structure for return value
  */
-void parse_args(int argc, char** argv, CConfig* config) {
+void parse_args(int argc, char** argv, CConfig* config, const bool marking) {
     if (argc < 4 || argc > 7) {
         fprintf(stderr, CONSOLE_RED "Chromatic Aberration expects 3-6 arguments, %d provided.\n" CONSOLE_RESET, argc - 1);
         print_help(argv[0]);
     }
     // Clear config struct
     *config = {};
-    // Iterate over remaining args    
-    int i = 3;
+    // Iterate over remaining args
+    int i = marking ? 4 : 3;
     char* t_arg = 0;
     for (; i < argc; i++) {
         // Make a lowercase copy of the argument
@@ -98,9 +99,9 @@ void parse_args(int argc, char** argv, CConfig* config) {
 }
 }
 
-void runChromaticAberration(int argc, char** argv, const Implementation implementation) {
+void runChromaticAberration(int argc, char** argv, const Implementation implementation, const bool marking) {
     CConfig config;
-    parse_args(argc, argv, &config);
+    parse_args(argc, argv, &config, marking);
 
     // Inputs
     Image input_image;
@@ -125,6 +126,7 @@ void runChromaticAberration(int argc, char** argv, const Implementation implemen
 
     // Run student implementation
     float timing_log;
+    float min_time = FLT_MAX;
     Image result_image;
     result_image.width = input_image.width;
     result_image.height = input_image.height;
@@ -161,6 +163,7 @@ void runChromaticAberration(int argc, char** argv, const Implementation implemen
             // Sum timing info
             float milliseconds = 0;
             CUDA_CALL(cudaEventElapsedTime(&milliseconds, startT, stopT));
+            min_time = min_time > milliseconds ? milliseconds : min_time;
             timing_log += milliseconds;
         }
         if (TOTAL_RUNS > 1)
@@ -174,9 +177,9 @@ void runChromaticAberration(int argc, char** argv, const Implementation implemen
     }
 
     // Validate and report
+    unsigned int errors = 0;
     {
         const unsigned int total_pixels = validation_image.width * validation_image.height;
-        unsigned int errors = 0;
         for (unsigned int i = 0; i < total_pixels; ++i) {
             if (validation_image.data[i] != result_image.data[i]) {
                 ++errors;
@@ -208,6 +211,10 @@ void runChromaticAberration(int argc, char** argv, const Implementation implemen
     printf(CONSOLE_YELLOW "Code built as DEBUG, timing results are invalid!\n" CONSOLE_RESET);
 #endif
     printf("Time: %.3fms\n", timing_log);
+
+    if (marking) {
+        printf("\n\nRESULT=%s=%f=%f=", errors ? "FAIL" : "PASS", timing_log, min_time);
+    }
 
     // Cleanup
     free(result_image.data);
