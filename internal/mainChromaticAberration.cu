@@ -66,7 +66,7 @@ void parse_args(int argc, char** argv, CConfig* config, const bool marking) {
             continue;
         }
         // Input/Output file
-        if (!strcmp(t_arg + arg_len - 5, ".png")) {
+        if (!strcmp(t_arg + arg_len - 5, ".png") || (!config->input_file && !strcmp(t_arg + arg_len - 5, ".jpg"))) {
             if (config->input_file) {
                 if (config->output_file) {
                     fprintf(stderr, "Multiple inputs/outputs were provided, this is not supported!\n");
