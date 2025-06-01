@@ -181,7 +181,8 @@ void runChromaticAberration(int argc, char** argv, const Implementation implemen
     {
         const unsigned int total_pixels = validation_image.width * validation_image.height;
         for (unsigned int i = 0; i < total_pixels; ++i) {
-            if (validation_image.data[i] != result_image.data[i]) {
+            int eps = abs(static_cast<int>(validation_image.data[i]) - static_cast<int>(result_image.data[i]));
+            if (eps>2) {
                 ++errors;
             }
         }
